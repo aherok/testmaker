@@ -39,6 +39,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
 
     'south',
+    'registration',
 
     'tester',
 )
@@ -93,6 +94,12 @@ STATICFILES_FINDERS = (
 
 STATIC_URL = '/static/'
 MEDIA_URL = STATIC_URL + 'media/'
+
+#
+# ACCOUNT
+#
+LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = '/'
 
 #
 # LOCAL SETTINGS

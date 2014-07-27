@@ -39,6 +39,16 @@
             </ul>
         </div>
         {% endcomment %}
+        <div class="navbar-nav navbar-right">
+            <span class="navbar-text">
+                {% if user.is_authenticated %}
+                    {{ user.username }} | <a href="{% url 'logout' %}">Wyloguj</a>
+                {% else %}
+                    <a href="{% url 'login' %}">Zaloguj</a> |
+                    <a href="{% url 'registration_register' %}">Zarejestruj</a>
+                {% endif %}
+            </span>
+        </div>
     </div>
 </div>
 

@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block main %}
+    <h2>Rejestracja</h2>
+
+    <form method="POST" class="form" id="login-form">
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        <div class="form-actions">
+            <input type="submit" value="Zaloguj" class="btn btn-primary btn-lg"/>
+        </div>
+    </form>
+{% endblock %}

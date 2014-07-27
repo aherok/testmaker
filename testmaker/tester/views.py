@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
+from django.contrib.auth.decorators import login_required
 from django.contrib.formtools.wizard.views import SessionWizardView
 from django.shortcuts import get_object_or_404
 from django.template.response import TemplateResponse
 from django.utils.datastructures import SortedDict
+from django.utils.decorators import method_decorator
 
 from tester.forms import QuestionForm
 from tester.models import Test
@@ -11,6 +13,7 @@ from tester.models import Test
 class TestView(SessionWizardView):
     template_name = 'tester/test_detail.html'
 
+    @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
         self.test = get_object_or_404(Test.objects.select_related('question_set', 'question__choice_set'),
                                       pk=self.kwargs.get('pk'))

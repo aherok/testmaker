@@ -10,4 +10,9 @@ urlpatterns = patterns('',
                        url(r'^$', ListView.as_view(model=Test, paginate_by=10), name='home'),
                        url(r'^admin/', include(admin.site.urls)),
                        url(r'^', include('tester.urls')),
+
+                       # login/register
+                       url(r'^logout/$', 'django.contrib.auth.views.logout', {'next_page': '/'}),
+                       url(r'^', include('registration.backends.simple.urls')),
+                       url(r'^', include('django.contrib.auth.urls')),
 )
