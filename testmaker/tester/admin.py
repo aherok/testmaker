@@ -10,6 +10,7 @@ class TestAdmin(admin.ModelAdmin):
 
 class ChoiceInline(admin.TabularInline):
     model = Choice
+    extra = 1
 
 
 class QuestionAdmin(admin.ModelAdmin):
