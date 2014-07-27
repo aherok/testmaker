@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block main %}
+
+    <h2>Wybierz test</h2>
+
+    {% if test_list %}
+        <ul class="nav list-unstyled">
+            {% for test in test_list %}
+                <li><a href="#">{{ test.name }}</a></li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Brak testów</p>
+    {% endif %}
+
+    {% if is_paginated %}
+        <ul class="pager">
+            {% if page_obj.has_previous %}
+                <li><a href="?page={{ page_obj.previous_page_number }}">previous</a></li>
+            {% endif %}
+            <li class="current">
+                Strona {{ page_obj.number }} z {{ paginator.num_pages }}
+            </li>
+            {% if page_obj.has_next %}
+                <li><a href="?page={{ page_obj.next_page_number }}">następna</a></li>
+            {% endif %}
+        </ul>
+    {% endif %}
+
+{% endblock %}
