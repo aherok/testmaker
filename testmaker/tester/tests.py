@@ -18,7 +18,8 @@ class UserAccessTests(TestCase):
 
     def test_no_access_for_anonymous(self):
         response = self.client.get('/test/1/')
-        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue('/login/' in response.url)
 
 
 class TestListViewTests(TestCase):
