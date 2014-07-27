@@ -1,8 +1,24 @@
 # -*- coding: utf-8 -*-
-
+from django.contrib.auth import get_user_model
 from django.test import TestCase
 
 from tester.models import Test, Question, Choice
+
+User = get_user_model()
+
+
+class UserAccessTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username='test_user', email='user@example.com', password='secret')
+
+        self.test = Test.objects.create(name='Some Test')
+        self.q1 = Question.objects.create(test=self.test, content='question 1')
+        self.c11 = Choice.objects.create(question=self.q1, content='some sophisticated answer', is_correct=True)
+        self.c12 = Choice.objects.create(question=self.q1, content='answer2')
+
+    def test_no_access_for_anonymous(self):
+        response = self.client.get('/test/1/')
+        self.assertEqual(response.status_code, 401)
 
 
 class TestListViewTests(TestCase):
