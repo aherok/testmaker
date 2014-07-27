@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block main %}
+
+    <h2>Test: {{ test.name }}</h2>
+
+    <p>Krok {{ wizard.steps.step1 }} z {{ wizard.steps.count }}</p>
+
+    <form action="" method="post">{% csrf_token %}
+        {{ wizard.form.media }}
+
+        <table>
+            {{ wizard.management_form }}
+            {% if wizard.form.forms %}
+                {{ wizard.form.management_form }}
+                <h3>asd: {{ form.question.content }}</h3>
+                {% for form in wizard.form.forms %}
+                    {{ form }}
+                {% endfor %}
+            {% else %}
+                {{ wizard.form }}
+            {% endif %}
+        </table>
+
+        <div class="actions">
+            <button type="submit" class="btn btn-primary">
+                {% if wizard.steps.step1 == wizard.steps.count %}
+                    Zakończ
+                {% else %}
+                    Dalej
+                {% endif %}
+            </button>
+        </div>
+    </form>
+
+{% endblock %}

@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 from django.db import models
 
 
@@ -17,6 +16,14 @@ class Question(models.Model):
 
     def __unicode__(self):
         return self.content
+
+    def check_answers(self, answer_list):
+        """
+        simple checking - fetch given answer IDs and check how many of them are correct
+        :param answer_list: list of answer IDs to check
+        :return: number of correct answers
+        """
+        return self.choice_set.filter(is_correct=True, id__in=answer_list).count()
 
 
 class Choice(models.Model):
