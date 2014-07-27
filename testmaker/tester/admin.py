@@ -4,6 +4,10 @@ from django.contrib import admin
 from tester.models import Question, Choice, Test
 
 
+class TestAdmin(admin.ModelAdmin):
+    list_display = ('name', 'order')
+
+
 class ChoiceInline(admin.TabularInline):
     model = Choice
 
@@ -14,5 +18,5 @@ class QuestionAdmin(admin.ModelAdmin):
     inlines = [ChoiceInline]
 
 
-admin.site.register(Test)
+admin.site.register(Test, TestAdmin)
 admin.site.register(Question, QuestionAdmin)
