@@ -41,6 +41,7 @@ INSTALLED_APPS = (
     'south',
     'registration',
 
+    'accounts',
     'tester',
 )
 
