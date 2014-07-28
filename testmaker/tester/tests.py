@@ -70,6 +70,7 @@ class QuizTestCase(TestCase):
 
         # load first step
         response = self.client.get('/test/1/')
+        self.assertTrue('Some Test' in response.content)
         self.assertEqual(response.context['wizard']['steps'].current, "0")
 
         # POST request
