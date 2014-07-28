@@ -54,28 +54,33 @@ class TestListViewTests(TestCase):
 class QuizTestCase(TestCase):
     def setUp(self):
         self.user = User.objects.create_user(username='test_user', email='user@example.com', password='secret')
-        self.client.login(username='test_user',password='secret')
+        self.client.login(username='test_user', password='secret')
+
+        self.test = Test.objects.create(name='Some Test')
+        self.test_url = '/test/%s/' % self.test.id
+
+        self.q1 = Question.objects.create(test=self.test, content='question 1')
+        self.c11 = Choice.objects.create(question=self.q1, content='some sophisticated answer', is_correct=True)
+        self.c12 = Choice.objects.create(question=self.q1, content='answer2')
+        self.c13 = Choice.objects.create(question=self.q1, content='answer3')
+
+        self.q2 = Question.objects.create(test=self.test, content='question 2')
+        self.c21 = Choice.objects.create(question=self.q2, content='answer1', is_correct=True)
+        self.c22 = Choice.objects.create(question=self.q2, content='answer2')
 
     def test_empty_answer(self):
         """
         Submitting form without form answer should display error
         :return:
         """
-        # setup data
-        test = Test.objects.create(name='Some Test')
-
-        q1 = Question.objects.create(test=test, content='question 1')
-        c11 = Choice.objects.create(question=q1, content='some sophisticated answer', is_correct=True)
-        c12 = Choice.objects.create(question=q1, content='answer2')
-
         # load first step
-        response = self.client.get('/test/1/')
+        response = self.client.get(self.test_url)
         self.assertTrue('Some Test' in response.content)
         self.assertEqual(response.context['wizard']['steps'].current, "0")
 
         # POST request
         self.assertTrue('some sophisticated answer' in response.content)
-        response = self.client.post('/test/1/', {'test_view-current_step': "0"})
+        response = self.client.post(self.test_url, {'test_view-current_step': "0"})
 
         self.assertEqual(response.context['wizard']['steps'].current, "0")
         self.assertTrue('answer' in response.context['form'].errors)
@@ -86,24 +91,13 @@ class QuizTestCase(TestCase):
         First step is passed without errors
         :return:
         """
-        # setup data
-        test = Test.objects.create(name='Some Test')
-
-        q1 = Question.objects.create(test=test, content='question 1')
-        c11 = Choice.objects.create(question=q1, content='some sophisticated answer', is_correct=True)
-        c12 = Choice.objects.create(question=q1, content='answer2')
-        c13 = Choice.objects.create(question=q1, content='answer3')
-
-        q2 = Question.objects.create(test=test, content='question 2')
-        c21 = Choice.objects.create(question=q2, content='answer1', is_correct=True)
-        c22 = Choice.objects.create(question=q2, content='answer2')
-
         # load first step
-        response = self.client.get('/test/1/')
+        response = self.client.get(self.test_url)
         self.assertTrue('some sophisticated answer' in response.content)
 
         # POST
-        response = self.client.post('/test/1/', {'test_view-current_step': "0", 'q-1-answer': unicode(c11.id), })
+        response = self.client.post(self.test_url,
+                                    {'test_view-current_step': "0", 'q-1-answer': unicode(self.c11.id), })
         self.assertEqual(response.context['wizard']['steps'].current, "1")
         self.assertTrue(not response.context['form'].errors)
 
@@ -112,51 +106,32 @@ class QuizTestCase(TestCase):
         wrong data is sent through form - should display error message
         :return:
         """
-        # setup data
-        test = Test.objects.create(name='Some Test')
-
-        q1 = Question.objects.create(test=test, content='question 1')
-        c11 = Choice.objects.create(question=q1, content='some sophisticated answer', is_correct=True)
-        c12 = Choice.objects.create(question=q1, content='answer2', is_correct=True)
-        c13 = Choice.objects.create(question=q1, content='answer3')
-
         # load first step
-        response = self.client.get('/test/1/')
+        response = self.client.get(self.test_url)
         self.assertTrue('some sophisticated answer' in response.content)
 
         # POST wrong data
-        response = self.client.post('/test/1/',
-                                    {'test_view-current_step': "0", 'q-%s-answer' % q1.id: 'wrong data sent', })
+        response = self.client.post(self.test_url,
+                                    {'test_view-current_step': "0", 'q-%s-answer' % self.q1.id: 'wrong data sent', })
         self.assertEqual(response.context['wizard']['steps'].current, "0")
         self.assertTrue('answer' in response.context['form'].errors)
 
 
     def test_correct_full_submission(self):
-        # setup data
-        test = Test.objects.create(name='Some Test')
-
-        q1 = Question.objects.create(test=test, content='question 1')
-        c11 = Choice.objects.create(question=q1, content='some sophisticated answer', is_correct=True)
-        c12 = Choice.objects.create(question=q1, content='answer2', is_correct=True)
-        c13 = Choice.objects.create(question=q1, content='answer3')
-
-        q2 = Question.objects.create(test=test, content='question 2')
-        c21 = Choice.objects.create(question=q2, content='answer1', is_correct=True)
-        c22 = Choice.objects.create(question=q2, content='answer2')
-
         # load first step
-        response = self.client.get('/test/1/')
+        response = self.client.get(self.test_url)
         self.assertTrue('some sophisticated answer' in response.content)
 
         # POST first step - set one correct answer
-        response = self.client.post('/test/1/',
-                                    {'test_view-current_step': "0", 'q-%s-answer' % q1.id: [c11.id, c13.id], })
+        response = self.client.post(self.test_url,
+                                    {'test_view-current_step': "0",
+                                     'q-%s-answer' % self.q1.id: [self.c11.id, self.c13.id], })
         self.assertEqual(response.context['wizard']['steps'].current, "1")
         self.assertTrue(not response.context['form'].errors)
 
         # POST second step - set one correct answer
-        response = self.client.post('/test/1/',
-                                    {'test_view-current_step': "1", 'q-%s-answer' % q2.id: c21.id, })
+        response = self.client.post(self.test_url,
+                                    {'test_view-current_step': "1", 'q-%s-answer' % self.q2.id: self.c21.id, })
         self.assertTrue('wizard' not in response.context)
         self.assertEqual(response.context['points_count'], 2)
 
