@@ -9,6 +9,7 @@
     <form action="" method="post">{% csrf_token %}
         {{ wizard.form.media }}
 
+        <h3>{{ form.question.content }}</h3>
         <table>
             {{ wizard.management_form }}
             {% if wizard.form.forms %}
