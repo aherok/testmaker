@@ -40,6 +40,7 @@ INSTALLED_APPS = (
 
     'south',
     'registration',
+    'bootstrapform',
 
     'accounts',
     'tester',

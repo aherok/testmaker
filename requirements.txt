@@ -1,5 +1,5 @@
 Django==1.6.5
 South==1.0
-django-debug-toolbar==1.2.1
+django-bootstrap-form
 psycopg2==2.5.3
 django-registration==1.0
