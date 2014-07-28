@@ -52,6 +52,10 @@ class TestListViewTests(TestCase):
 
 
 class QuizTestCase(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username='test_user', email='user@example.com', password='secret')
+        self.client.login(username='test_user',password='secret')
+
     def test_empty_answer(self):
         """
         Submitting form without form answer should display error
