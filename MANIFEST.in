@@ -1,0 +1,9 @@
+include requirements.txt
+
+recursive-include testmaker/accounts/templates *
+recursive-include testmaker/tester/templates *
+recursive-include testmaker/tester/static *
+
+global-exclude testmaker/local_settings.py
+global-exclude *.pyo
+global-exclude *.pyc
