@@ -61,7 +61,7 @@ class QuizTestCase(TestCase):
 
         self.q1 = Question.objects.create(test=self.test, content='question 1')
         self.c11 = Choice.objects.create(question=self.q1, content='some sophisticated answer', is_correct=True)
-        self.c12 = Choice.objects.create(question=self.q1, content='answer2')
+        self.c12 = Choice.objects.create(question=self.q1, content='answer2', is_correct=True)
         self.c13 = Choice.objects.create(question=self.q1, content='answer3')
 
         self.q2 = Question.objects.create(test=self.test, content='question 2')
@@ -133,5 +133,15 @@ class QuizTestCase(TestCase):
         response = self.client.post(self.test_url,
                                     {'test_view-current_step': "1", 'q-%s-answer' % self.q2.id: self.c21.id, })
         self.assertTrue('wizard' not in response.context)
-        self.assertEqual(response.context['points_count'], 2)
+        self.assertTrue('points_count' in response.context)
+
+    def test_all_correct_answers(self):
+        # 2 / 2 correct answers = 2 points
+        self.assertEqual(self.q1.check_answers([self.c11.id, self.c12.id]), 2)
+
+        # 1 / 2 correct answers = 0 points
+        self.assertEqual(self.q1.check_answers([self.c11.id]), 0)
+
+        # 1 / 2 correct answers and 1 bad = -1 points
+        self.assertEqual(self.q1.check_answers([self.c11.id, self.c13.id]), -1)
 

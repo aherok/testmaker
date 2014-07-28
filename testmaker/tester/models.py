@@ -34,7 +34,17 @@ class Question(models.Model):
         :param answer_list: list of answer IDs to check
         :return: number of correct answers
         """
-        return self.choice_set.filter(is_correct=True, id__in=answer_list).count()
+        answer_list = [int(i) for i in answer_list]
+        all_answers = self.choice_set.all().values('id', 'is_correct')
+        points = 0
+
+        for a in all_answers:
+            if a['is_correct']:
+                points += (1 if a['id'] in answer_list else -1)
+            elif not a['is_correct'] and a['id'] in answer_list:
+                points -= 1
+
+        return points
 
 
 class Choice(models.Model):
