@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 from django.contrib.auth.decorators import login_required
 from django.contrib.formtools.wizard.views import SessionWizardView
+from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404
+from django.template.context import Context
+from django.template.loader import get_template
 from django.template.response import TemplateResponse
 from django.utils.datastructures import SortedDict
 from django.utils.decorators import method_decorator
@@ -47,6 +50,14 @@ class TestView(SessionWizardView):
 
         ctx = {
             'test': self.test,
-            'points_count': points_count
+            'points_count': points_count,
+            'user': self.request.user,
         }
+
+        # send email if email provided
+        if self.request.user.email:
+            tpl = get_template('tester/email.txt')
+            content = tpl.render(Context(ctx))
+            send_mail(u"Twój wynik z TestMakera", content, None, [self.request.user.email])
+
         return TemplateResponse(self.request, template='tester/test_done.html', context=ctx)

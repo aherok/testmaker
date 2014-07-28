@@ -1,0 +1,3 @@
+Witaj {{ username }}!
+
+Otrzymałeś {{ points_count }} {{ points_count|pluralize:"punkt,punktów" }} rozwiązując test "{{ test.name }}"
