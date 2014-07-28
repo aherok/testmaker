@@ -1,7 +1,7 @@
 import os
 import sys
 
-from setuptools import setup
+from setuptools import setup, find_packages
 
 test_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, test_dir)
@@ -12,7 +12,7 @@ os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 setup(
     name='testmaker',
     version='0.1',
-    packages=['testmaker'],
+    packages=find_packages(),
     include_package_data=True,
     license='BSD License',
     description='A simple multiple-choice tests application',
